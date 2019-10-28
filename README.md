@@ -7,3 +7,5 @@
  that a single function moving forward and also plan on letting the user select
  how many players should be in the game and write a gameFunction that will allow
  the player and computer to select which opponent they are asking for what card.
+ 
+ to execute the game put all three files in a folder and execute > python gofish.py 
