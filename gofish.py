@@ -2,140 +2,204 @@ import os
 import deck
 import gameFunctions
 
-userHand = []
-computerHand = []
-turn = 0
-otherPlayerHand = [] 
-currentPlayerHand = []
-userScore = 0
-computerScore = 0
 
+playerTurn = 1
+playerHandDict = {}
 
+#creates the deck
 theDeck = deck.Deck()
+
+#shuffles the deck
 theDeck.shuffle()
-computerHand,userHand = theDeck.deal(7)
 
-userHand,userScore = gameFunctions.check_4_of_a_kind(userHand,userScore)
-computerHand,computerScore = gameFunctions.check_4_of_a_kind(computerHand,computerScore)
+#gets number of players in the game
+players = gameFunctions.how_many_players()
 
+#generate player list and creates the data for playerHandDict dictionary which holds the cards for each players hand
+playerList = gameFunctions.generate_player_list(players)
+for items in playerList:
+  playerHandDict[items] = [] 
+
+#generate the scoreDict that holds the scoring for the game
+scoreDict = gameFunctions.generate_score_dict(playerList)
+
+if players == 2:
+  cardsToDeal = 7
+else:
+  cardsToDeal = 5
+
+#deals the cards to the dictionary
+playerHandDict = theDeck.deal(playerHandDict, cardsToDeal)
+
+#checks players hands for 4 of a kind before the game starts
+playerHandDict, scoreDict = gameFunctions.check_4_of_a_kind(playerHandDict,scoreDict,playerList)
+
+#main game loop and the var to kill the loop
 gameInPlay = True
 while gameInPlay:
-  if theDeck.empty == True and currentPlayerHand == [] and otherPlayerHand == []:
-    gameInPlay = False
-#while computerHand and userHand != [] or theDeck.empty == True:
+  #statements to decide if the game is over or not. if the deck is empty and all player hands = [] the game is over
+  if theDeck.empty == True:
+    emptyHands = 0
+    for key, values in playerHandDict.items():
+      if values == []:
+        emptyHands += 1
+      if emptyHands == len(playerList):
+        gameInPlay = False
   
-  print('\nThis is computer score '+str(computerScore))
-  print('\nThis is user score '+str(userScore))
+  #prints the deck
+  #print('THE DECK ',theDeck.deck)
+  
+  #prints the score
+  print('\nThis is the score ')
+  print(scoreDict)
   '''Uncomment next line to see if the deck is empty during game play'''
   #print(theDeck.empty)
-  #prints the users hand
-  print('USER HAND\n')
-  for items in userHand:
-    print(items)
-  '''Uncomment next lines to see the computer hand during game play'''
-  #print('COMPUTERHAND\n')
-  #for items in computerHand:
-    #print(items)
-  #print('\n')
+  
 
-  
-  
-  
-  
-  #changes which hand is considered the currentPlayerHand, currentPlayerScore, and otherPlayerHand
-  if turn == 0:
-    currentPlayerHand = userHand
-    currentPlayerScore = userScore
-    otherPlayerHand = computerHand
-  else:
-    currentPlayerHand = computerHand
-    currentPlayerScore = computerScore
-    otherPlayerHand = userHand    
-  
-  if turn == 0:
-
-    if currentPlayerHand == [] and theDeck.empty == False:
+    
+  #user Turn
+  if playerTurn == 1:
+    turn = playerTurn
+    
+    #prints the users hand
+    for key, value in playerHandDict.items():
+      cardsInHand = 0
+      for items in value:
+        cardsInHand += 1
+        #print(items)
+      print(key,'had',cardsInHand,'cards in hand')
+    print('USER HAND\n')
+    for items in playerHandDict[playerList[turn-1]]:
+      print(items)  
+    
+    
+    #draws card is the user hand is empty and the deck is not
+    if playerHandDict[playerList[turn-1]] == [] and theDeck.empty == False:
       for nums in range(0,5):
         ''''DRAW ATTENTION HERE FOR THE RUN OUT OF CARDS'''
         if theDeck.empty == False:
-          currentPlayerHand.append(theDeck.draw())
+          playerHandDict[playerList[turn-1]].append(theDeck.draw())
         else:
-          pass
-      print(currentPlayerHand,'This stuff')
+          print('deck ran out of cards before 5')
+        #prints the hand after the update
+        for key, value in playerHandDict[playerList[turn-1]]:
+          print(key, value,)
+    #prints deck out of cards if the deck is empty
+    else:
+      print('player had cards')
+ 
+    #if the user doesn't have any cards cause the deck is empty from the above statement it advances to the next players turn   
+    if playerHandDict[playerList[turn-1]] == []:
+      playerTurn += 1
+    
+    #if user goes they get to select the player, else a random player is chosen other than the players turn it is.
+    else:
+      playerSelected = gameFunctions.choose_player(playerList,playerTurn)
+
       #try to get input from user
-    if currentPlayerHand != []:
       try:
-        card = gameFunctions.choice(currentPlayerHand)
+        card = gameFunctions.choice(playerHandDict[playerList[turn-1]])
       except Exception as e:
         print(e)
       
-      #uses the check_for_card function to see if the opponent has a card of type choice
-      #and adds it to current player hand if it does.  it updates the turn variable if the 
-      #opponent has the card so the player will go again or do nothing so the next player will go
-      if otherPlayerHand != []:
-        turn, otherPlayerHand, currentPlayerHand = gameFunctions.check_for_card(turn,card,otherPlayerHand,currentPlayerHand)
+      #uses the check_for_card function to see if the opponent has a card of type card
+      #and adds it to current player hand if it does.     
+      foundCard,playerHandDict = gameFunctions.check_for_card(card,playerHandDict,playerList,turn,playerSelected)
+      
+      #prints the hand after the update
+      for key, value in playerHandDict[playerList[turn-1]]:
+        print(key, value,)
+      
+      #if the card is found it remains players 1's turn otherwise it advances to the next player turn
+      if foundCard == True:
+        playerTurn = 1
       else:
-        turn = 1
-      if turn == 1 and theDeck.empty != True:
-        currentPlayerHand.append(theDeck.draw())
-      
-      #checks for 4 of a kind and returns current player hand and score
-      currentPlayerHand,currentPlayerScore = gameFunctions.check_4_of_a_kind(currentPlayerHand,currentPlayerScore)    
-      '''CLEAR SCREEN'''
-      os.system('cls')
-      
-      #assigns current player score and hand to the user variables
-      userScore = currentPlayerScore
-      userHand = currentPlayerHand
-      #print(theDeck.empty)
-    
-  else:
-    #draws 5 card if the computer doesn't have any and the deck isn't empty
-    if currentPlayerHand == [] and theDeck.empty == False:
-      for nums in range(0,5):
-        if turn == 1 and theDeck.empty == False:
-          currentPlayerHand.append(theDeck.draw())
-    
-    print('COMPUTER TURN\n\n')
-    if currentPlayerHand != []:
-        card = gameFunctions.computer_turn(currentPlayerHand)
-        if otherPlayerHand != []:
-          turn, otherPlayerHand, currentPlayerHand = gameFunctions.check_for_card_computer(turn,card,otherPlayerHand,currentPlayerHand)
+        playerTurn += 1
+        
+      #if its player 2's turn its the same thing as go-fish so draw a card       
+      if playerTurn == 2:
+        if theDeck.empty == False:
+          playerHandDict[playerList[turn-1]].append(theDeck.draw())
         else:
-          turn = 0
-    computerScore = currentPlayerScore
-    computerHand = currentPlayerHand
-    '''CLEAR SCREEN'''
-    os.system('cls')
-    print('Computer Choose ',card)
-    if turn == 0 and theDeck.empty == False:
-      currentPlayerHand.append(theDeck.draw())
-    if currentPlayerHand != []:
-      currentPlayerHand,currentPlayerScore = gameFunctions.check_4_of_a_kind(currentPlayerHand,currentPlayerScore)
-    computerScore = currentPlayerScore
-    computerHand = currentPlayerHand
-      #print('hand after go fish\n')
-      #for items in currentPlayerHand:
-       #   print(items)
-    if turn == 0 and theDeck.empty != True:
-      if currentPlayerHand == []:
-        for nums in range(0,5):
-          if turn == 0 and theDeck.empty == False: 
-            currentPlayerHand.append(theDeck.draw())    
-          
-print('!!!!GAME OVER!!!!\nFinal Score')
-print('\nThis is user score '+str(userScore))
-print('\nThis is computer score '+str(computerScore))
+          print('THE DECK OUT OF CARDS' )
+      else:
+        print('STILL PLAYER 1 TURN')
 
-#Win/lose logic
-if userScore > computerScore:
-  print('\n!!!!YOU WIN!!!!')
-elif computerScore > userScore:
-  print('\n!!!!YOU LOSE!!!!')
-else:
-  print('\n!!!!YOU TIED!!!!')  
-
+      #checks for 4 of a kind and returns playerHandDict and scoreDict
+      playerHandDict,scoreDict = gameFunctions.check_4_of_a_kind(playerHandDict,scoreDict,playerList)
+      '''CLEAR SCREEN'''
+      #os.system('cls')
+  
+  #not the users turn so computer goes  
+  else:
+    #makes the variable turn equal to the player turn so we evaluate the correct player hand 
+    turn = playerTurn
+    print(playerTurn,'PLAYER TURN')
+    
+    #what to set turn back to, to go again for the computer if it found the correct card
+    repeatTurn = turn
+    
+    #draws 5 card if the computer doesn't have any and the deck isn't empty
+    if playerHandDict[playerList[turn-1]] == [] and theDeck.empty == False:
+      for nums in range(0,5):
+        if theDeck.empty == False:
+          playerHandDict[playerList[turn-1]].append(theDeck.draw())
+        else:
+          print('no cards')
+    else:
+      print('player had cards')
       
+    #if the computer has cards and the deck is empty the computer still guesses for cards
+    if playerHandDict[playerList[turn-1]] == []:
+      #sets foundCard to false because it didn't get to guess
+      foundCard = False
+      #advances the computer turn      
+      playerTurn = gameFunctions.turn_checker(playerList,playerTurn,foundCard)
+    else:
+    
+      print('COMPUTER TURN\n\n')
+      #print('ACTUAL PLAYERS HAND')
+      #print(playerHandDict[playerList[turn-1]])
+      if playerHandDict[playerList[turn-1]] != []:
+        card = gameFunctions.computer_turn(playerHandDict[playerList[turn-1]])
+        
+        #selects a player for the computer to get cards from
+        playerSelectedByComputer = gameFunctions.choose_player(playerList,playerTurn)
+        
+        if playerHandDict[playerList[playerSelectedByComputer]] != []:
+          foundCard, playerHandDict = gameFunctions.check_for_card(card,playerHandDict,playerList,turn,playerSelectedByComputer)
+          
+          if bool(foundCard) == True:
+            playerTurn = repeatTurn
+          else:
+            foundCard = False
+  
+      '''CLEAR SCREEN'''
+      #os.system('cls')
+      print('Computer Choose ',card)
+      if bool(theDeck.empty) == False and bool(foundCard) == False:
+        
+        playerHandDict[playerList[turn-1]].append(theDeck.draw())    
+    
+      if playerHandDict[playerList[turn-1]] != []:
+        playerHandDict,scoreDict = gameFunctions.check_4_of_a_kind(playerHandDict,scoreDict,playerList)
+      else:
+        print('THE COMPUTER HAND WAS EMPTY')
+        playerHandDict,scoreDict = gameFunctions.check_4_of_a_kind(playerHandDict,scoreDict,playerList)
+    
+      print('THIS CARD WAS FOUND ',foundCard)    
+      
+      if foundCard == False:
+      #advances the computer turn      
+        playerTurn = gameFunctions.turn_checker(playerList,playerTurn,foundCard)
+
+
+#END OF LOOP      
+print('!!!!GAME OVER!!!!\nFinal Score')
+print(scoreDict)
+
+#Win/tie logic
+gameFunctions.win_printer(scoreDict)
     
   
 

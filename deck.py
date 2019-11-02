@@ -51,23 +51,23 @@ class Deck(object):
         self.empty = True
       return(card_drawn)
     else:
-      pass
+      print('NO CARDS WERE DRAWN THE DECK IS EMPTY')
     
-  def deal(self,cards_to_deal):
+  def deal(self, playerDictionary, cards_to_deal):
     '''deals the number of cards passed as an argument and returns computerHand and userHand.
        example: 
           deck.deal(6)
        
        This will deal 6 cards to computerHand and userHand and return them in variable computerHand, userHand
     '''
-    userHand = []
-    computerHand = []
     for nums in range(0,cards_to_deal):
-      computerHand.append(self.deck.pop(0))
-      userHand.append(self.deck.pop(0))
-      self.count -= 2
-    if self.count == 0:
-      self.empty = True
-    return computerHand,userHand
+      for items in playerDictionary.keys():
+        if self.empty == False:
+          playerDictionary[items].append(self.deck.pop(0))
+          #print(self.count,'this was the count of the deck')
+          self.count -= 1  
+          if self.count <= 0:
+            self.empty = True
+    return playerDictionary
   
   

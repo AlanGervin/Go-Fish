@@ -64,6 +64,7 @@ def choose_player(playerList,playerTurn):
     print('incorrect player selection')
     #playerSelect = 0
     
+
     
 def how_many_players():
   players = 1
@@ -116,6 +117,26 @@ def check_for_card(card,playerHandDict,playerList,turn,playerSelect):
       index -= 1
 
   return foundCard,playerHandDict
+
+
+
+'''
+  foundCard = False
+  index = 0
+  otherPlayerHand = playerHandDict[playerList[playerSelect]]
+  
+  for cards in otherPlayerHand:
+    if otherPlayerHand[index][0] == card:
+      actualCard = playerHandDict[playerList[playerSelect]].pop(index)
+      print(actualCard)
+      playerHandDict[playerList[turn-1]].append(actualCard)
+      foundCard = True
+    else:
+      index += 1
+
+  return foundCard,playerHandDict
+'''
+  
   
   
 def check_4_of_a_kind(playerHandDict,playerScoreDict,playerList):
@@ -141,6 +162,7 @@ def check_4_of_a_kind(playerHandDict,playerScoreDict,playerList):
           print('THE HAND WAS EMPTY')
        
         
+
     for cardCount in cardListCount:
       if str(cardCount[1]) == '4':
         playerScoreDict[keys] += 1
@@ -167,25 +189,5 @@ def computer_turn(currentPlayerHand):
     return card
   else:
     print('something weird happened')
-
-def win_printer(scoreDict):
-  winnerString = ''
-  winnerList = []
-  score = 0
-  for key, value in scoreDict.items():
-    if value > score:
-      score = value
-      winnerList = [key]
-    elif value == score:
-      winnerList.append(key)
-    
-  for items in winnerList:
-    winnerString+= items+', '  
-  if len(winnerList) > 1:
-    print(winnerString, 'tied with', score,'points')
-  else:
-    print(winnerString,'won with', score,'points' )
-
-
 
   

@@ -9,22 +9,24 @@ def choice(currentPlayerHand):
   uncomment the following #line and the first #line of the while loop, 
   and comment out the try block to have the game auto choose cards
   '''
-  #theList=['a','2','3','4','5','6','7','8','9','10','j','q','k']
+  #comment out the following line
+  theList=['a','2','3','4','5','6','7','8','9','10','j','q','k']
   while choice == None:
-      #choice = choose(theList)
-      
+    #comment out the following line
+    choice = choose(theList)
+    '''
       #section to comment out for auto choosing
       try:
         choice = str(input('ask for a card, valid choices are(A,2,3,4,5,6,7,8,9,10,J,Q,K) but you must have one of that type card: '))
       except Exception as e:
         print(e)
       #end of section to comment out for auto choosing
-      
-      if choice.upper() in cards_held_by_player:
-        return choice.upper()
-      else:
-        choice = None
-        print('you do not have a card of that type')
+    '''
+    if choice.upper() in cards_held_by_player:
+      return choice.upper()
+    else:
+      choice = None
+      print('you do not have a card of that type')
 
 def choose_player(playerList,playerTurn):
   playerSelect = 0
@@ -38,7 +40,7 @@ def choose_player(playerList,playerTurn):
   while playerSelect == 0 or playerSelect == playerTurn:
     #comment out this section to have the computer auto choose a player. 
     #also make sure you dedent the section below on randomNumber
-   
+    '''
     if playerTurn == 1:
       try:
         playerSelect = int(input('Select a player who\'s hand you would like to select from: '))
@@ -46,13 +48,13 @@ def choose_player(playerList,playerTurn):
         print(e)
       #return playerSelect-1  
     else:
-   
+    '''   
    #end of section to comment out for auto choose a player.
 
       #dedent this line one if you are doing auto choose
-      randomNumber = choose(playerNumbers)
-      if randomNumber != playerTurn:
-        playerSelect = randomNumber
+    randomNumber = choose(playerNumbers)
+    if randomNumber != playerTurn:
+      playerSelect = randomNumber
        
   if playerSelect <= len(playerList) and int(playerSelect) > 0:
     if playerSelect == playerTurn:
@@ -64,6 +66,7 @@ def choose_player(playerList,playerTurn):
     print('incorrect player selection')
     #playerSelect = 0
     
+
     
 def how_many_players():
   players = 1
@@ -116,6 +119,26 @@ def check_for_card(card,playerHandDict,playerList,turn,playerSelect):
       index -= 1
 
   return foundCard,playerHandDict
+
+
+
+'''
+  foundCard = False
+  index = 0
+  otherPlayerHand = playerHandDict[playerList[playerSelect]]
+  
+  for cards in otherPlayerHand:
+    if otherPlayerHand[index][0] == card:
+      actualCard = playerHandDict[playerList[playerSelect]].pop(index)
+      print(actualCard)
+      playerHandDict[playerList[turn-1]].append(actualCard)
+      foundCard = True
+    else:
+      index += 1
+
+  return foundCard,playerHandDict
+'''
+  
   
   
 def check_4_of_a_kind(playerHandDict,playerScoreDict,playerList):
@@ -141,6 +164,7 @@ def check_4_of_a_kind(playerHandDict,playerScoreDict,playerList):
           print('THE HAND WAS EMPTY')
        
         
+
     for cardCount in cardListCount:
       if str(cardCount[1]) == '4':
         playerScoreDict[keys] += 1
@@ -167,25 +191,5 @@ def computer_turn(currentPlayerHand):
     return card
   else:
     print('something weird happened')
-
-def win_printer(scoreDict):
-  winnerString = ''
-  winnerList = []
-  score = 0
-  for key, value in scoreDict.items():
-    if value > score:
-      score = value
-      winnerList = [key]
-    elif value == score:
-      winnerList.append(key)
-    
-  for items in winnerList:
-    winnerString+= items+', '  
-  if len(winnerList) > 1:
-    print(winnerString, 'tied with', score,'points')
-  else:
-    print(winnerString,'won with', score,'points' )
-
-
 
   
