@@ -33,7 +33,7 @@ def choose_player(playerList,playerTurn):
   for items in playerList:
     playerNumbers.append(count)
     count+=1
-  print(playerTurn,'player turn')
+  print(playerTurn,'PLAYER TURN')
     
   while playerSelect == 0 or playerSelect == playerTurn:
     #comment out this section to have the computer auto choose a player. 

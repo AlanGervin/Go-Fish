@@ -49,9 +49,6 @@ while gameInPlay:
   #prints the deck
   #print('THE DECK ',theDeck.deck)
   
-  #prints the score
-  print('\nThis is the score ')
-  print(scoreDict)
   '''Uncomment next line to see if the deck is empty during game play'''
   #print(theDeck.empty)
   
@@ -60,7 +57,11 @@ while gameInPlay:
   #user Turn
   if playerTurn == 1:
     turn = playerTurn
-    
+
+    #prints the score
+    print('\nThis is the score ')
+    print(scoreDict)    
+ 
     #prints the users hand
     for key, value in playerHandDict.items():
       cardsInHand = 0
@@ -69,9 +70,9 @@ while gameInPlay:
         #print(items)
       print(key,'had',cardsInHand,'cards in hand')
     print('USER HAND\n')
-    for items in playerHandDict[playerList[turn-1]]:
-      print(items)  
-    
+    for card, suit in playerHandDict[playerList[turn-1]]:
+      print(card, suit)  
+    print('\n')
     
     #draws card is the user hand is empty and the deck is not
     if playerHandDict[playerList[turn-1]] == [] and theDeck.empty == False:
@@ -84,9 +85,7 @@ while gameInPlay:
         #prints the hand after the update
         for key, value in playerHandDict[playerList[turn-1]]:
           print(key, value,)
-    #prints deck out of cards if the deck is empty
-    else:
-      print('player had cards')
+        print('\n')
  
     #if the user doesn't have any cards cause the deck is empty from the above statement it advances to the next players turn   
     if playerHandDict[playerList[turn-1]] == []:
@@ -107,8 +106,8 @@ while gameInPlay:
       foundCard,playerHandDict = gameFunctions.check_for_card(card,playerHandDict,playerList,turn,playerSelected)
       
       #prints the hand after the update
-      for key, value in playerHandDict[playerList[turn-1]]:
-        print(key, value,)
+      #for key, value in playerHandDict[playerList[turn-1]]:
+       # print(key, value,)
       
       #if the card is found it remains players 1's turn otherwise it advances to the next player turn
       if foundCard == True:
@@ -123,18 +122,18 @@ while gameInPlay:
         else:
           print('THE DECK OUT OF CARDS' )
       else:
+        os.system('cls')
         print('STILL PLAYER 1 TURN')
 
       #checks for 4 of a kind and returns playerHandDict and scoreDict
       playerHandDict,scoreDict = gameFunctions.check_4_of_a_kind(playerHandDict,scoreDict,playerList)
       '''CLEAR SCREEN'''
-      #os.system('cls')
+      os.system('cls')
   
   #not the users turn so computer goes  
   else:
     #makes the variable turn equal to the player turn so we evaluate the correct player hand 
     turn = playerTurn
-    print(playerTurn,'PLAYER TURN')
     
     #what to set turn back to, to go again for the computer if it found the correct card
     repeatTurn = turn
@@ -146,9 +145,7 @@ while gameInPlay:
           playerHandDict[playerList[turn-1]].append(theDeck.draw())
         else:
           print('no cards')
-    else:
-      print('player had cards')
-      
+
     #if the computer has cards and the deck is empty the computer still guesses for cards
     if playerHandDict[playerList[turn-1]] == []:
       #sets foundCard to false because it didn't get to guess
@@ -157,12 +154,11 @@ while gameInPlay:
       playerTurn = gameFunctions.turn_checker(playerList,playerTurn,foundCard)
     else:
     
-      print('COMPUTER TURN\n\n')
       #print('ACTUAL PLAYERS HAND')
       #print(playerHandDict[playerList[turn-1]])
       if playerHandDict[playerList[turn-1]] != []:
         card = gameFunctions.computer_turn(playerHandDict[playerList[turn-1]])
-        
+        print('\n')
         #selects a player for the computer to get cards from
         playerSelectedByComputer = gameFunctions.choose_player(playerList,playerTurn)
         
@@ -173,10 +169,9 @@ while gameInPlay:
             playerTurn = repeatTurn
           else:
             foundCard = False
-  
       '''CLEAR SCREEN'''
       #os.system('cls')
-      print('Computer Choose ',card)
+      print(playerList[turn-1],'choose ',card)
       if bool(theDeck.empty) == False and bool(foundCard) == False:
         
         playerHandDict[playerList[turn-1]].append(theDeck.draw())    
