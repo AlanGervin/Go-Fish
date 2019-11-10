@@ -44,7 +44,9 @@ def choose_player(playerList,playerTurn):
         playerSelect = int(input('Select a player who\'s hand you would like to select from: '))
       except Exception as e:
         print(e)
-      #return playerSelect-1  
+      if playerSelect > len(playerList):
+        print('incorrect player selection')
+        playerSelect = 0
     else:
    
    #end of section to comment out for auto choose a player.
@@ -62,7 +64,7 @@ def choose_player(playerList,playerTurn):
       return playerSelect-1
   else:
     print('incorrect player selection')
-    #playerSelect = 0
+    playerSelect = 0
     
     
 def how_many_players():
